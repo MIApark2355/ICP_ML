@@ -24,17 +24,13 @@ def main():
     validation = np.column_stack([validation[name] for name in features])
     test = np.column_stack([test[name] for name in features])
 
-
-    # Initialize the linear regression model
     model = LinearRegression()
 
-    # Fit the model with the training data
     model.fit(train, trainY)
 
-    # Predict the target variable for the validation set
     valid_predictions = model.predict(validation)
 
-    # Evaluate the model performance on the validation set
+    # Evaluation: the model performance on the validation set
     mse = get_MSE(validationY, valid_predictions)
     r2 = get_r2(validationY, valid_predictions)
 
