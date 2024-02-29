@@ -4,11 +4,49 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 
+def get_MSE(actual, predicted):
+    """Calculate the mean squared error between actual and predicted values."""
+    return np.mean((actual - predicted) ** 2)
+
+def get_r2(actual, predicted):
+    """Calculate the R-squared score between actual and predicted values."""
+    ss_res = np.sum((actual - predicted) ** 2)
+    ss_tot = np.sum((actual - np.mean(actual)) ** 2)
+    return 1 - (ss_res / ss_tot)
+
+
 
 def main():
     train, validation, test, trainY, validationY, testY = parse_data()
-    
-    # model = LinearRegression()
+
+    features = ['hAbp', 'hIcp', 'Hct', 'ABP', 'CBFV']  # excluding Artery
+    train = np.column_stack([train[name] for name in features])
+    validation = np.column_stack([validation[name] for name in features])
+    test = np.column_stack([test[name] for name in features])
+
+
+    # Initialize the linear regression model
+    model = LinearRegression()
+
+    # Fit the model with the training data
+    model.fit(train, trainY)
+
+    # Predict the target variable for the validation set
+    valid_predictions = model.predict(validation)
+
+    # Evaluate the model performance on the validation set
+    mse = get_MSE(validationY, valid_predictions)
+    r2 = get_r2(validationY, valid_predictions)
+
+    print(f"Validation MSE: {mse}")
+    print(f"Validation R^2: {r2}")
+
+    test_predictions = model.predict(test)
+    test_mse = get_MSE(testY, test_predictions)
+    test_r2 = get_r2(testY, test_predictions)
+
+    print(f"Test MSE: {test_mse}")
+    print(f"Test R^2: {test_r2}")
     # trainX = np.array(train[:, :5])
     # trainY = np.array(train[:, 5:]).T
     # testX = test[:, :-1]
@@ -19,4 +57,5 @@ def main():
     # preds = model.predict(testX)
     # mse_val = np.mean((preds - testY)**2)
     # print(mse_val)
+
 main()

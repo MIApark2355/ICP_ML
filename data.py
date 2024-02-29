@@ -8,10 +8,25 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from patient import Patient
 
+
+# Validate and convert data to ensure it matches the expected structured dtype
+def validate_and_convert(data, dtype):
+    validated_data = []
+    for record in data:
+        try:
+            record = tuple(record[field] for field in dtype.names)
+            validated_data.append(record)
+        except Exception as e:
+            print(f"Error in data conversion: {e}")
+            # Handle or log the error appropriately
+    return np.array(validated_data, dtype=dtype)
+
+
 def parse_data():
     # Ensure the working directory is set to where the files are located
     # removers = ["#", " ", ]
-    folder_path = Path('./physionet.org/files/neurocritical-pediatric/1.0.0/waves')
+    # folder_path = Path('./physionet.org/files/neurocritical-pediatric/1.0.0/waves')
+    folder_path = Path('data/waves')
 
     header = [('Artery', int), ('hAbp', float), ('hIcp', float), ('Hct', float), ('ABP', float), ('CBFV', float)]
 
@@ -33,7 +48,7 @@ def parse_data():
     for filename in folder_path.iterdir():
 
         if not accessed:
-            os.chdir('./physionet.org/files/neurocritical-pediatric/1.0.0/waves')
+            os.chdir('data/waves')
             accessed = True
         
         entity = filename.stem.split("_")
@@ -104,4 +119,11 @@ def parse_data():
     # for key,value in patient_Map.items():
     #     print(key)
     #     print(value)
+            
+    # Convert to the correct dtype
+        # train_data = validate_and_convert(train_data, dtype=np.dtype(header))
+        # validation_data = validate_and_convert(validation_data, dtype=np.dtype(header))
+        # test_data = validate_and_convert(test_data, dtype=np.dtype(header))
+
     return np.vstack(train_data), np.vstack(validation_data), np.vstack(test_data), np.array(train_y), np.array(valid_y), np.array(test_y)
+
