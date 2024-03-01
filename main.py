@@ -1,7 +1,8 @@
 from sklearn.model_selection import train_test_split
-from data import parse_data
+from data import split_data, process_data
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from pathlib import Path
 
 
 def get_MSE(actual, predicted):
@@ -17,38 +18,40 @@ def get_r2(actual, predicted):
 
 
 def main():
-    train, validation, test, trainY, validationY, testY = parse_data()
+    folder_path = Path('data/waves')
+    header = [('Artery', int), ('hAbp', float), ('hIcp', float), ('Hct', float), ('ABP', float), ('CBFV', float)]
 
-    features = ['hAbp', 'hIcp', 'Hct', 'ABP', 'CBFV']  # excluding Artery
-    train = np.column_stack([train[name] for name in features])
-    validation = np.column_stack([validation[name] for name in features])
-    test = np.column_stack([test[name] for name in features])
+    # Assume process_data and split_data functions are defined elsewhere in your script
+    aggregated_data, aggregated_labels = process_data(folder_path, header)
+    train_data, train_labels, valid_data, valid_labels, test_data, test_labels = split_data(aggregated_data, aggregated_labels)
+
+    # Extract the features for training, validation, and testing
+    features = ['hAbp', 'hIcp', 'Hct', 'ABP', 'CBFV']
+    train_features = np.column_stack([train_data[name] for name in features])
+    validation_features = np.column_stack([valid_data[name] for name in features])
+    test_features = np.column_stack([test_data[name] for name in features])
 
     model = LinearRegression()
+    model.fit(train_features, train_labels)
 
-    model.fit(train, trainY)
-
-    valid_predictions = model.predict(validation)
-
-    # Evaluation: the model performance on the validation set
-    mse = get_MSE(validationY, valid_predictions)
-    r2 = get_r2(validationY, valid_predictions)
+    # Making predictions and evaluating the model
+    valid_predictions = model.predict(validation_features)
+    mse = get_MSE(valid_labels, valid_predictions)
+    r2 = get_r2(valid_labels, valid_predictions)
 
     print(f"Validation MSE: {mse}")
     print(f"Validation R^2: {r2}")
 
-    test_predictions = model.predict(test)
-    test_mse = get_MSE(testY, test_predictions)
-    test_r2 = get_r2(testY, test_predictions)
+    test_predictions = model.predict(test_features)
+    test_mse = get_MSE(test_labels, test_predictions)
+    test_r2 = get_r2(test_labels, test_predictions)
 
     print(f"Test MSE: {test_mse}")
     print(f"Test R^2: {test_r2}")
-    # trainX = np.array(train[:, :5])
-    # trainY = np.array(train[:, 5:]).T
-    # testX = test[:, :-1]
-    # testY = test[:, -1]
-    print(test)
-    print(testY)
+
+    # For debugging
+    print(test_features)
+    print(test_labels)
     # model.fit(trainX, trainY)
     # preds = model.predict(testX)
     # mse_val = np.mean((preds - testY)**2)
