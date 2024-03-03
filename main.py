@@ -15,10 +15,19 @@ def get_r2(actual, predicted):
     ss_tot = np.sum((actual - np.mean(actual)) ** 2)
     return 1 - (ss_res / ss_tot)
 
+import time
+
 def evaluate_model(model, train_features, train_labels, validation_features, valid_labels, test_features, test_labels):
+    print(f"Training {model.__class__.__name__}...")
+    start_time = time.time()
     model.fit(train_features, train_labels)
+    print(f"Trained {model.__class__.__name__} in {time.time() - start_time:.2f} seconds.")
+    
+    print(f"Predicting with {model.__class__.__name__}...")
+    start_time = time.time()
     valid_predictions = model.predict(validation_features)
     test_predictions = model.predict(test_features)
+    print(f"Predicted with {model.__class__.__name__} in {time.time() - start_time:.2f} seconds.")
 
     print(f"Model: {model.__class__.__name__}")
     print(f"Validation MSE: {get_MSE(valid_labels, valid_predictions)}")
@@ -26,6 +35,7 @@ def evaluate_model(model, train_features, train_labels, validation_features, val
     print(f"Test MSE: {get_MSE(test_labels, test_predictions)}")
     print(f"Test R^2: {get_r2(test_labels, test_predictions)}")
     print("\n")
+
 
 def main():
     folder_path = Path('data/waves')
@@ -41,7 +51,8 @@ def main():
 
     linear_model = LinearRegression()
     ridge_model = Ridge()
-    rf_model = RandomForestRegressor()
+    rf_model = RandomForestRegressor(n_estimators=10, max_depth=10, verbose=2, n_jobs=-1)
+
 
     for model in [linear_model, ridge_model, rf_model]:
         evaluate_model(model, train_features, train_labels, validation_features, valid_labels, test_features, test_labels)
