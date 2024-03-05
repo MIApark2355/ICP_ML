@@ -53,6 +53,10 @@ def main():
     ridge_model = Ridge()
     rf_model = RandomForestRegressor(n_estimators=10, max_depth=10, verbose=2, n_jobs=-1)
 
+    print("shape printing////")
+    for name in ['hAbp', 'hIcp', 'Hct', 'ABP', 'CBFV']:
+        print(name, np.array(train_data[name]).shape)
+
 
     for model in [linear_model, ridge_model, rf_model]:
         evaluate_model(model, train_features, train_labels, validation_features, valid_labels, test_features, test_labels)
