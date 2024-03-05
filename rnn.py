@@ -25,16 +25,12 @@ def main():
     
     aggregated_data, aggregated_labels = process_data(folder_path, header)
 
-    sequence_length = 100  # Adjust based on your domain knowledge
+    sequence_length = 100
 
-    # Assuming aggregated_data is a dictionary with keys like 'hAbp', 'hIcp', etc.
     features_stacked = np.stack([segment_sequences(aggregated_data[name], sequence_length) for name in ['hAbp', 'hIcp', 'Hct', 'ABP', 'CBFV']], axis=-1)
-    
-    # Adjust labels accordingly. You might need to reshape or truncate your labels to match the sequences.
-    # For instance, you may take the label corresponding to the last timestep of each sequence.
+
     adjusted_labels = aggregated_labels[sequence_length - 1:]
 
-    # Split data here after adjusting your labels to match the segmented sequences
     train_features, train_labels, test_features, test_labels = split_data(features_stacked, adjusted_labels)
 
     # Define the RNN model
