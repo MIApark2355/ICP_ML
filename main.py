@@ -7,7 +7,7 @@ from sklearn.model_selection import GridSearchCV
 from pathlib import Path
 import pandas as pd
 import shap
-
+import time
 def get_MSE(actual, predicted):
     """Calculate the mean squared error between actual and predicted values."""
     return np.mean((actual - predicted) ** 2)
@@ -18,7 +18,7 @@ def get_r2(actual, predicted):
     ss_tot = np.sum((actual - np.mean(actual)) ** 2)
     return 1 - (ss_res / ss_tot)
 
-import time
+
 
 def evaluate_model(model, train_features, train_labels, validation_features, valid_labels, test_features, test_labels, param_grid):
     print(f"Training {model.__class__.__name__}...")
