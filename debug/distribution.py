@@ -54,5 +54,5 @@ def plot_distribution(data, features, patient_id):
 header = [('hAbp', float), ('hIcp', float), ('Hct', float), ('ABP', float), ('CBFV', float)]
 features = ['hAbp', 'hIcp', 'Hct', 'ABP', 'CBFV']
 
-folder_path = Path('data/waves')
+folder_path = Path('../data/waves')
 process_data(folder_path, header, features)

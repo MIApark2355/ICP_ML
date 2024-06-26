@@ -6,7 +6,7 @@ import re
 import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
-from patient import Patient
+from py.patient import Patient
 from sklearn.preprocessing import MinMaxScaler
 
 
