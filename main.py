@@ -66,16 +66,16 @@ def main():
     linear_model_params = {'fit_intercept': [True, False],'positive': [True, False],}
     ridge_model = Ridge()
     ridge_model_params = {'alpha': [0.1, 1.0, 10.0], 'solver': ['auto', 'svd', 'cholesky', 'saga']}
-    rf_model = RandomForestRegressor(n_estimators=10, verbose=2, n_jobs=-1)
-    rf_model_params = {'max_depth': [10, 20, 30]}
+    rf_model = RandomForestRegressor(n_estimators=10, min_samples_split=2, max_depth=5)
+    rf_model_params = {'max_depth': [5,15,20]}
 
-    evaluate_model(rf_model, train_data, train_labels, valid_data, valid_labels, test_data, test_labels, rf_model_params)
-    # for model, params in [(linear_model,linear_model_params), (ridge_model,ridge_model_params), (rf_model, rf_model_params)]:
-    #     evaluate_model(model, train_data, train_labels, valid_data, valid_labels, test_data, test_labels, params)
+    # evaluate_model(rf_model, train_data, train_labels, valid_data, valid_labels, test_data, test_labels, rf_model_params)
+    for model, params in [(linear_model,linear_model_params), (ridge_model,ridge_model_params), (rf_model, rf_model_params)]:
+        evaluate_model(model, train_data, train_labels, valid_data, valid_labels, test_data, test_labels, params)
     
     # For debugging
-    print(test_data)
-    print(test_labels)
+    # print(test_data)
+    # print(test_labels)
     # model.fit(trainX, trainY)
     # preds = model.predict(testX)
     # mse_val = np.mean((preds - testY)**2)
